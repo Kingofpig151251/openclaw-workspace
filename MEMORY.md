@@ -27,16 +27,17 @@
 ## 📊 Grafana 監控系統
 - **Grafana** (Docker, host網路, :3000) — 登入 lam151251 / Lam@963852
 - **Prometheus** (:9090) — 180天保留，1355指標
-- **Node Exporter** (:9100) — 系統指標
+- **Node Exporter** (:9100) — 系統指標，wrapper 加 --no-collector.thermal_zone
 - **Loki** (:3100) — 日誌，30天保留（compactor 自動清理）
 - **Alloy** (:12345) — 日誌收集→Loki
 - **Pushgateway** (Docker, :9091) — OpenClaw自定義指標推送
 - **Webhook接收器** (:15010) — Grafana告警→Redis→微信推送
-- Dashboard UID: `fnos-nas`，46面板（16個OpenClaw相關）
+- Dashboard 結構：📁 Infrastructure（Node Exporter Full + NAS 日誌）、📁 OpenClaw（OpenClaw 監控）
 - 告警規則：OpenClawDataStale(>10min)、XfyunAPIDown、WikiHitRateLow(<70%)
 - 告警鏈路：Grafana→Webhook:15010→Redis DB1→push_metrics.py→心跳檢查→微信
 - Cron: push_metrics.py 每5分鐘，webhook @reboot 自啟
 - 數據源UID: Loki=`P8E80F9AEF21F6940`，Prometheus=`cftjkd0m8y29sa`
+- ⚠️ Loki 查詢用 `hostname`/`filename` 標籤，不是 `job`
 
 ## 🔧 工具與服務
 - **Ollama**：`/vol1/@appcenter/ai_installer/ollama/bin/ollama`，端口 11434
@@ -71,10 +72,25 @@
 - 搜尋命中率已達 100%，交叉引用密度 6.16，合規率 100%
 - 維護規範：`_internal/WIKI-SCHEMA.md`，矛盾追蹤：`_internal/contradictions.md`
 
+## 🔄 Git 自動備份
+- Repo: `github.com/Kingofpig151251/openclaw-workspace`（私有）
+- 備份腳本：`scripts/git_backup.sh`
+- 排除：.venv、king-wiki-js（獨立 repo）、.openclaw 內部狀態
+- 深夜流水線 Phase 3 自動執行
+
+## 🧠 Self-Improving Agent
+- 安裝 @pskoett/self-improving-agent v4.0.1
+- .learnings/ 目錄：LEARNINGS.md / ERRORS.md / FEATURE_REQUESTS.md
+- Hook 已啟用（🧠 self-improvement）
+
 ## 📅 重要待辦
 
 - GitHub 2FA：thoth151251-bot 帳號需在 2026-09-10 前啟用
-- Wiki 超大頁面：shenzhen-itinerary(129行)、side-by-side(103行) 考慮拆分
+- Wiki 超大頁面：shenzhen-itinerary(129行)、sp-ambassadors-sharing(122行)、side-by-side(103行) 考慮拆分
+- 重啟 Gateway 使 contextWindow 512k 生效
+- 飛牛瀏覽器從 UI 卸載
+- 告警微信推送實際觸發測試
+- Webhook @reboot 自啟機制
 
 ## ⚠️ 重要教訓
 - sudoers.d 文件名不能有 `.`，權限必須 440
@@ -83,6 +99,7 @@
 - cron 環境變量極度精簡，PATH 和 HOME 都要手動設
 - 訊飛星火 token 計數不可靠
 - sudo 寫入 openclaw.json 會改變文件權限，需 chown 992:992 修復
+- ⚠️ 飛牛更新可能覆蓋 Node Exporter wrapper
 - **不要 kill openclaw-gateway 進程！** 需重啟找小king
 - shell 命令預期可能無結果時加 `|| true`，避免誤報
 - 用戶群組變更不影響已運行進程，需 `sg` 或新 session
@@ -90,9 +107,11 @@
 
 ## 🔑 配置要點
 - 訊飛星火 Coding Plan 免費，成本=0，不需追蹤 estimatedCostUsd
-- 訊飛星火 timeoutSeconds: 600，agent timeoutSeconds: 600
-- contextWindow: 128000，reserveTokensFloor: 20000
+- 訊飛星火 timeoutSeconds: 900，agent timeoutSeconds: 900，compaction timeoutSeconds: 900
+- 主力模型：`讯飞星火/xopglm52`（智譜 GLM-5.2），fallback: `讯飞星火/astron-code-latest`
+- contextWindow: 512000（待重啟生效），reserveTokensFloor: 20000
 - 訊飛星火 token 計數不可靠，API 回報值波動極大
+- xopglm52 實測支持 560k context，1M 超時
 - **訊飛適配計劃統一記錄：`xfyun-adaptation-plan.md`**
 - 微信 streaming mode: block（不支援 edit message）
 - 記憶搜索：Ollama nomic-embed-text
@@ -107,7 +126,7 @@
 - Google Calendar 已整合課程時間表
 
 ## 🕐 Cron 排程
-- 01:00 每天：深夜維護流水線（Wiki審查→訊飛探測→記憶整理）
+- 01:00 每天：深夜維護流水線（Wiki審查→記憶整理→Git Backup）
 - 07:00 每天：早安報告（天氣+郵件）
 - 深夜流水線 timeout: 1800s，model: 訊飛星火/astron-code-latest
 - ⚠️ 同一時段不要多個任務同時跑，會搶配額
