@@ -88,7 +88,7 @@
 ## 🎮 Discord 多用戶管理
 - 伺服器 ID：1531560409499172865
 - Bot ID：1528998891092181023
-- 管理員 role ID：1531567803289833520（⚠️ 缺 Administrator bit，需小king在Discord角色設定打開）
+- Bot 已有 Administrator 權限（小king 已設定，2026-07-31）
 - Member role ID：1532656209306587238（藍色，基本權限）
 - @everyone role ID：1531560409499172865
 - 小king Discord ID：501559258492698637
@@ -107,8 +107,11 @@
 - 項目清單：`memory/discord-projects.json`
 - 審計日誌：`memory/discord-audit.log`
 - Discord API 需用 `DiscordBot` User-Agent，Python urllib 會被 Cloudflare 1010
-- trim-cli 可全自動管理 NAS 用戶 + 共享目錄 + ACL 權限
-- 所有操作全自動，小king 不需動手
+- 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002）
+- 項目頻道命名：直接用項目名，不加 project- 前綴
+- 記憶隔離：目前靠自律，未來需技術隔離
+- NAS 操作前必須先 trim-cli login，不假設 token 有效
+- 密碼安全：隨機臨時密碼，只發私人頻道，不記錄明文
 
 - GitHub 2FA：thoth151251-bot 帳號需在 2026-09-10 前啟用
 - Wiki 超大頁面：shenzhen-itinerary(129行)、sp-ambassadors-sharing(122行)、side-by-side(103行) 考慮拆分
