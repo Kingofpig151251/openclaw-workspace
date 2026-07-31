@@ -2,9 +2,9 @@
 
 ## 每次心跳（輕量檢查）
 
-- [ ] 跑 wiki benchmark：`bash /vol1/@apphome/trim.openclaw/data/workspace/king-wiki-js/_internal/wiki-benchmark.sh`
+- [ ] 跑 wiki benchmark：`bash /vol1/1000/Github/king-wiki-js/_internal/wiki-benchmark.sh`
 - [ ] 搜尋命中率 < 70% → 自動改善 index.md 摘要（補關鍵詞）
-- [ ] 跑 wiki benchmark：`bash /vol1/@apphome/trim.openclaw/data/workspace/king-wiki-js/_internal/wiki-benchmark.sh`
+- [ ] 跑 wiki benchmark：`bash /vol1/1000/Github/king-wiki-js/_internal/wiki-benchmark.sh`
 - [ ] 搜尋命中率 < 70% → 自動改善 index.md 摘要（補關鍵詞）
 - [ ] description 太長(>80字) → 自動截短至30-60字
 - [ ] 缺 frontmatter 欄位 → 自動補
@@ -52,6 +52,6 @@
   "lastDeepAudit": "2026-07-27",
   "lastBenchmarkHitRate": "100%",
   "lastBenchmarkTokens": 105027,
-  "lastMailSync": "down — agently-cli OAuth expired since 7/28, 4+ auth links sent 7/29-7/30, awaiting 小king re-auth"
+  "lastMailSync": "disabled — 小king deleted agently-cli mail on 7/31"
 }
 ```

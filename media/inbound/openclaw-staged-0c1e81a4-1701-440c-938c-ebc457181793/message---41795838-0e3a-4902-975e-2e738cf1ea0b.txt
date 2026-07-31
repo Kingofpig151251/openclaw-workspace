@@ -1,0 +1,62 @@
+content.js:14 CookieCloud Content Script Loaded
+index-CggvsaZ0.js:361  GET http://100.83.194.95:8888/api/auth/me 401 (Unauthorized)
+dt @ index-CggvsaZ0.js:361
+mt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+contentScript.js:25376 [2026-07-31T09:24:39.167Z - content] Logger service initialized
+index-CggvsaZ0.js:1  GET http://100.83.194.95:8888/api/courses 401 (Unauthorized)
+_apiFetch @ index-CggvsaZ0.js:1
+(anonymous) @ index-CggvsaZ0.js:1
+initCache @ index-CggvsaZ0.js:1
+ot @ index-CggvsaZ0.js:361
+await in ot
+login-enter @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+index-CggvsaZ0.js:1  GET http://100.83.194.95:8888/api/studios 401 (Unauthorized)
+_apiFetch @ index-CggvsaZ0.js:1
+(anonymous) @ index-CggvsaZ0.js:1
+initCache @ index-CggvsaZ0.js:1
+ot @ index-CggvsaZ0.js:361
+await in ot
+login-enter @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+index-CggvsaZ0.js:1  GET http://100.83.194.95:8888/api/formula-templates 401 (Unauthorized)
+_apiFetch @ index-CggvsaZ0.js:1
+(anonymous) @ index-CggvsaZ0.js:1
+initCache @ index-CggvsaZ0.js:1
+ot @ index-CggvsaZ0.js:361
+await in ot
+login-enter @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+index-CggvsaZ0.js:1  GET http://100.83.194.95:8888/api/sync/pull 401 (Unauthorized)
+p @ index-CggvsaZ0.js:1
+g @ index-CggvsaZ0.js:1
+await in g
+_t @ index-CggvsaZ0.js:361
+ot @ index-CggvsaZ0.js:361
+await in ot
+login-enter @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+index-CggvsaZ0.js:361  GET http://100.83.194.95:8888/api/announcements 500 (Internal Server Error)
+St @ index-CggvsaZ0.js:361
+_t @ index-CggvsaZ0.js:361
+ot @ index-CggvsaZ0.js:361
+await in ot
+login-enter @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+index-CggvsaZ0.js:301  GET http://100.83.194.95:8888/api/ai/conversations 401 (Unauthorized)
+loadLastConversation @ index-CggvsaZ0.js:301
+(anonymous) @ index-CggvsaZ0.js:361
+requestAnimationFrame
+$ @ index-CggvsaZ0.js:361
+switch-tab @ index-CggvsaZ0.js:361
+Nt @ index-CggvsaZ0.js:361
+(anonymous) @ index-CggvsaZ0.js:361
+
+
+登入了,又大量報錯了

@@ -15,6 +15,10 @@
 - 升級日期：2026-07-26
 
 
+## 🏠 小king 的 Home 目錄
+- `/vol1/1000/` = 小king 的 home directory
+- GitHub repos 放 `/vol1/1000/Github/`
+
 ## 🖥️ NAS 環境（ITD-NAS）
 - 系統：Debian 12 + 飛牛 fnOS
 - CPU：i5-10505 @ 3.2GHz（6核12線程）
@@ -58,12 +62,10 @@
 - **Python venv**：`.venv`（Whisper v20250625 + Pillow v12.3.0 + redis 8.0.1）
 - **ffmpeg**：已有二進制
 
-## 📧 郵件歸檔系統
-- agent.qq.com → agently-cli → Maildir → Dovecot IMAP → Roundcube :8680
-- 同步腳本：`/vol1/@apphome/mail-archive/mail-sync.py`，每5分鐘 cron
-- 自動分類：Security(90d) / GitHub(180d) / Synology(180d) / AgentMail(365d) / Finance(永久) / Travel(永久) / Personal(永久)
-- 登入：user `mail` / password `thoth2026`
-- ⚠️ cron 需 HOME + sg Administrators + chown+chmod 配套
+## 📧 郵件歸檔系統（已停用）
+- agently-cli 已被小king 刪除（2026-07-31），不再使用
+- 歷史架構：agent.qq.com → agently-cli → Maildir → Dovecot IMAP → Roundcube :8680
+- 同步腳本：`/vol1/@apphome/mail-archive/mail-sync.py`（已停用）
 
 ## 📚 知識庫
 - **king-wiki-js**（GitHub）= 小king 私人知識庫，我負責維護
@@ -83,7 +85,30 @@
 - .learnings/ 目錄：LEARNINGS.md / ERRORS.md / FEATURE_REQUESTS.md
 - Hook 已啟用（🧠 self-improvement）
 
-## 📅 重要待辦
+## 🎮 Discord 多用戶管理
+- 伺服器 ID：1531560409499172865
+- Bot ID：1528998891092181023
+- 管理員 role ID：1531567803289833520（⚠️ 缺 Administrator bit，需小king在Discord角色設定打開）
+- Member role ID：1532656209306587238（藍色，基本權限）
+- @everyone role ID：1531560409499172865
+- 小king Discord ID：501559258492698637
+- 頻道 ID：
+  - 📋 資訊 category: 1532645465076662286
+  - 👤 成員頻道 category: 1532645559796760746
+  - 💬 公共 category: 1532645561675813075
+  - 📁 項目 category: 1532669169387044904
+  - #資訊公告: 1532645497960005703（唯讀）
+  - #小king: 1532647352832102532（私有）
+  - #閒聊: 1532645563701395608
+  - #求助: 1532645565668786277
+  - #項目申請: 1532661512278249482
+- 管理規範：`discord-management.md`
+- 成員清單：`memory/discord-members.json`
+- 項目清單：`memory/discord-projects.json`
+- 審計日誌：`memory/discord-audit.log`
+- Discord API 需用 `DiscordBot` User-Agent，Python urllib 會被 Cloudflare 1010
+- trim-cli 可全自動管理 NAS 用戶 + 共享目錄 + ACL 權限
+- 所有操作全自動，小king 不需動手
 
 - GitHub 2FA：thoth151251-bot 帳號需在 2026-09-10 前啟用
 - Wiki 超大頁面：shenzhen-itinerary(129行)、sp-ambassadors-sharing(122行)、side-by-side(103行) 考慮拆分
@@ -109,7 +134,7 @@
 - 訊飛星火 Coding Plan 免費，成本=0，不需追蹤 estimatedCostUsd
 - 訊飛星火 timeoutSeconds: 900，agent timeoutSeconds: 900，compaction timeoutSeconds: 900
 - 主力模型：`讯飞星火/xopglm52`（智譜 GLM-5.2），fallback: `讯飞星火/astron-code-latest`
-- contextWindow: 512000（待重啟生效），reserveTokensFloor: 20000
+- contextWindow: 512000（已生效），reserveTokensFloor: 20000
 - 訊飛星火 token 計數不可靠，API 回報值波動極大
 - xopglm52 實測支持 560k context，1M 超時
 - **訊飛適配計劃統一記錄：`xfyun-adaptation-plan.md`**
