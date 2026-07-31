@@ -62,6 +62,16 @@
 - **Python venv**：`.venv`（Whisper v20250625 + Pillow v12.3.0 + redis 8.0.1）
 - **ffmpeg**：已有二進制
 
+## 🏋️ fitness-coach-app
+- 位置：`/vol1/1000/Github/fitness-coach-app/`
+- Docker 部署：3 容器（PostgreSQL + Fastify :4000 + Nginx :8888）
+- 訪問地址：`http://192.168.1.50:8888`
+- 2026-07-31 完成大規模瘦身：22 commits，淨刪 ~6,623 行
+  - JS bundle: 206KB → 195.67KB，CSS: ~90KB → 85.08KB
+  - 測試: 287 → 197（全綠）
+- dev 和 main 已同步，main 為最新部署版本
+- ⚠️ 部署用的 .env 含密鑰，不應提交
+
 ## 📧 郵件歸檔系統（已停用）
 - agently-cli 已被小king 刪除（2026-07-31），不再使用
 - 歷史架構：agent.qq.com → agently-cli → Maildir → Dovecot IMAP → Roundcube :8680
@@ -84,6 +94,7 @@
 - 安裝 @pskoett/self-improving-agent v4.0.1
 - .learnings/ 目錄：LEARNINGS.md / ERRORS.md / FEATURE_REQUESTS.md
 - Hook 已啟用（🧠 self-improvement）
+- ⚠️ 安裝 skill 時必須嚴格按 skill-vetter 協議執行，不跳步
 
 ## 🎮 Discord 多用戶管理
 - 伺服器 ID：1531560409499172865
@@ -107,18 +118,19 @@
 - 項目清單：`memory/discord-projects.json`
 - 審計日誌：`memory/discord-audit.log`
 - Discord API 需用 `DiscordBot` User-Agent，Python urllib 會被 Cloudflare 1010
-- 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002）
+- 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002，2026-07-31 加入）
 - 項目頻道命名：直接用項目名，不加 project- 前綴
 - 記憶隔離：目前靠自律，未來需技術隔離
 - NAS 操作前必須先 trim-cli login，不假設 token 有效
 - 密碼安全：隨機臨時密碼，只發私人頻道，不記錄明文
+- Discord Bot 已有 Administrator 權限，頻道結構已建立（資訊/成員/公共/項目）
 
 - GitHub 2FA：thoth151251-bot 帳號需在 2026-09-10 前啟用
-- Wiki 超大頁面：shenzhen-itinerary(129行)、sp-ambassadors-sharing(122行)、side-by-side(103行) 考慮拆分
-- 重啟 Gateway 使 contextWindow 512k 生效
+- Wiki 超大頁面考慮拆分
 - 飛牛瀏覽器從 UI 卸載
 - 告警微信推送實際觸發測試
 - Webhook @reboot 自啟機制
+- ⚠️ Discord message plugin 在 openclaw-weixin channel 未載入，深夜檢查受限
 
 ## ⚠️ 重要教訓
 - sudoers.d 文件名不能有 `.`，權限必須 440
@@ -156,5 +168,6 @@
 ## 🕐 Cron 排程
 - 01:00 每天：深夜維護流水線（Wiki審查→記憶整理→Git Backup）
 - 07:00 每天：早安報告（天氣+郵件）
-- 深夜流水線 timeout: 1800s，model: 訊飛星火/astron-code-latest
+- 深夜流水線 timeout: 1800s
 - ⚠️ 同一時段不要多個任務同時跑，會搶配額
+- ⚠️ cron 環境中 message tool 可能不可用（如 Discord plugin 未載入），健康檢查需注意
