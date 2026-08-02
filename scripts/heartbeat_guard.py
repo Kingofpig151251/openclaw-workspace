@@ -19,7 +19,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from redis_task_guard import TaskGuard
 
-WIKI_ROOT = '/vol1/1000/Github/king-wiki-js'
+WIKI_ROOT = '/vol1/1000/projects/king-wiki-js'
 BENCHMARK_SCRIPT = os.path.join(WIKI_ROOT, '_internal', 'wiki-benchmark.sh')
 
 guard = TaskGuard()

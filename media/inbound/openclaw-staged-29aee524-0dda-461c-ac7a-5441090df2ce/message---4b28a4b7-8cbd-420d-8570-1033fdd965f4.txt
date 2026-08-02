@@ -1,0 +1,60 @@
+const grid = document.getElementById('calendar-grid');
+const wrapper = document.querySelector('.calendar-grid-wrapper');
+const card = document.querySelector('.calendar-card');
+console.log('=== Calendar Debug ===');
+console.log('card:', card.getBoundingClientRect());
+console.log('wrapper:', wrapper.getBoundingClientRect());
+console.log('grid:', grid.getBoundingClientRect());
+console.log('grid children:', grid.children.length);
+console.log('grid computed:', getComputedStyle(grid).gridTemplateColumns);
+console.log('---');
+[...grid.children].forEach((c, i) => {
+  const r = c.getBoundingClientRect();
+  const cs = getComputedStyle(c);
+  console.log(`[${i}] cls="${c.className}" ${Math.round(r.width)}x${Math.round(r.height)} children=${c.children.length} minh=${cs.minHeight} flex=${cs.display} html="${c.innerHTML.substring(0,80)}"`);
+});
+VM1157:4 === Calendar Debug ===
+VM1157:5 card: DOMRect {x: 125, y: 94, width: 397.046875, height: 557.5, top: 94, …}
+VM1157:6 wrapper: DOMRect {x: 142, y: 196.5, width: 363.046875, height: 438, top: 196.5, …}
+VM1157:7 grid: DOMRect {x: 142, y: 196.5, width: 363.046875, height: 438, top: 196.5, …}
+VM1157:8 grid children: 37
+VM1157:9 grid computed: 50.1406px 50.1562px 50.1406px 50.1562px 50.1406px 50.1562px 50.1562px
+VM1157:10 ---
+VM1157:14 [0] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [1] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [2] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [3] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [4] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [5] cls="calendar-day empty" 363x38 children=1 minh=36px flex=flex html="<div class="day-circle"></div>"
+VM1157:14 [6] cls="calendar-day today selected" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">1</div>"
+VM1157:14 [7] cls="calendar-day sunday" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">2</div>"
+VM1157:14 [8] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">3</div>"
+VM1157:14 [9] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">4</div>"
+VM1157:14 [10] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">5</div>"
+VM1157:14 [11] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">6</div>"
+VM1157:14 [12] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">7</div>"
+VM1157:14 [13] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">8</div>"
+VM1157:14 [14] cls="calendar-day sunday" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">9</div>"
+VM1157:14 [15] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">10</div>"
+VM1157:14 [16] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">11</div>"
+VM1157:14 [17] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">12</div>"
+VM1157:14 [18] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">13</div>"
+VM1157:14 [19] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">14</div>"
+VM1157:14 [20] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">15</div>"
+VM1157:14 [21] cls="calendar-day sunday" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">16</div>"
+VM1157:14 [22] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">17</div>"
+VM1157:14 [23] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">18</div>"
+VM1157:14 [24] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">19</div>"
+VM1157:14 [25] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">20</div>"
+VM1157:14 [26] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">21</div>"
+VM1157:14 [27] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">22</div>"
+VM1157:14 [28] cls="calendar-day sunday" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">23</div>"
+VM1157:14 [29] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">24</div>"
+VM1157:14 [30] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">25</div>"
+VM1157:14 [31] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">26</div>"
+VM1157:14 [32] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">27</div>"
+VM1157:14 [33] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">28</div>"
+VM1157:14 [34] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">29</div>"
+VM1157:14 [35] cls="calendar-day sunday" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">30</div>"
+VM1157:14 [36] cls="calendar-day" 50x38 children=1 minh=36px flex=flex html="<div class="day-circle">31</div>"
+undefined

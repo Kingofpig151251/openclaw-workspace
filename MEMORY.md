@@ -52,6 +52,11 @@
   - 引擎：Google, Bing, DDG, Wikipedia, Wikidata, GitHub, StackOverflow, Reddit, arxiv, DDG Images, Wikimedia Commons
   - 語言：auto（自動偵測查詢語言）
   - 分類：general,news,science
+- **PostgreSQL 16**（Docker, :5433）— Thoth 自用結構化數據
+  - 配置：`/vol1/@apphome/trim.openclaw/docker/postgres/docker-compose.yml`
+  - 數據：`/vol1/@apphome/trim.openclaw/docker/postgres/data/`
+  - 用戶：thoth / Thoth@963852
+  - 表：discord_members, discord_projects, discord_project_members, mail_classifications
 - **Redis 8.2.1**：localhost:6379
   - DB0：SearXNG 快取
   - DB1：Task Guard（去重/限流/狀態追蹤）
@@ -64,16 +69,45 @@
 
 ## 🏋️ fitness-coach-app
 - 位置：`/vol1/1000/Github/fitness-coach-app/`
-- Docker 部署：3 容器（PostgreSQL + Fastify :4000 + Nginx :8888）
-- 訪問地址：`http://192.168.1.50:8888`
-- 2026-07-31 完成大規模瘦身：22 commits，淨刪 ~6,623 行
-  - JS bundle: 206KB → 195.67KB，CSS: ~90KB → 85.08KB
-  - 測試: 287 → 197（全綠）
+- Docker 部署：3 容器（PostgreSQL + Fastify :4000 + Nginx :18888）
+- 訪問地址：`http://192.168.1.50:18888`
+- 2026-07-31 大規模瘦身：22 commits，淨刪 ~6,623 行
+- 2026-08-01~03 修復進展：
+  - UI 規範修復：CSS 變數體系、硬編碼 #fff/rgba 替換、--surface 誤用修復
+  - 後端審計修復：sid→studioId、CORS production、Admin Zod、ESM require→import、Auth 限流
+  - 命名重構：sid/sname→studioId/studioName、recurringGroupId 完全移除
+  - FormulaTemplate→Formula 重命名進行中
+  - SonarCloud 自動修復 cron（每天 03:00）
+- 待辦：Build+部署驗證深色模式、Medium/Low 後端問題、JS inline style、硬編碼 px
 - dev 和 main 已同步，main 為最新部署版本
 - ⚠️ 部署用的 .env 含密鑰，不應提交
 
-## 📧 郵件歸檔系統（已停用）
-- agently-cli 已被小king 刪除（2026-07-31），不再使用
+## 📧 Agent Mail（新）
+- agently-cli 已安裝，OAuth 已授權
+- 郵箱：lam151251@agent.qq.com
+- Skill：agently-mail（~/.agents/skills/agently-mail/）
+- 用途：收發郵件、搜尋、回覆、轉發
+- ⚠️ 寫操作需兩階段確認（ctk_xxx）
+
+## 📧 IMAP 歸檔系統（mbsync + Dovecot + Roundcube）
+- **mbsync (isync 1.4.4)**：同步 Gmail → 本地 Maildir
+  - 配置：`/vol1/@apphome/mail-archive/.mbsyncrc`
+  - Maildir：`/vol1/@apphome/mail-archive/maildir/`
+  - Gmail App Password 已設定
+  - 同步所有標籤（INBOX, Sent, Drafts, Trash, Spam, All Mail, Starred, Important）
+  - 每 15 分鐘自動同步（OpenClaw cron）
+  - 同步腳本：`/vol1/@apphome/mail-archive/sync.sh`
+- **Dovecot 2.3.19**：本地 IMAP :143
+  - 配置：`/etc/dovecot/dovecot.conf`
+  - 用戶：lam151251 / Lam@963852
+  - Maildir 後端
+- **Roundcube**（Docker, :8680）
+  - 連接 host.docker.internal:143 → Dovecot
+  - Web 介面：http://192.168.1.50:8680
+- 郵件統計：~658 封已同步
+
+## 📧 郵件歸郵件歸檔系統（舊，已停用）
+- agently-cli 舊版已被小king刪除（2026-07-31），現已重新安裝
 - 歷史架構：agent.qq.com → agently-cli → Maildir → Dovecot IMAP → Roundcube :8680
 - 同步腳本：`/vol1/@apphome/mail-archive/mail-sync.py`（已停用）
 
@@ -114,11 +148,11 @@
   - #求助: 1532645565668786277
   - #項目申請: 1532661512278249482
 - 管理規範：`discord-management.md`
-- 成員清單：`memory/discord-members.json`
-- 項目清單：`memory/discord-projects.json`
+- 成員清單：PostgreSQL `thoth` DB → `discord_members` 表
+- 項目清單：PostgreSQL `thoth` DB → `discord_projects` 表
 - 審計日誌：`memory/discord-audit.log`
 - Discord API 需用 `DiscordBot` User-Agent，Python urllib 會被 Cloudflare 1010
-- 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002，2026-07-31 加入）
+- 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002，2026-07-31 加入）+ 桃桃（2026-08-02 加入）
 - 項目頻道命名：直接用項目名，不加 project- 前綴
 - 記憶隔離：目前靠自律，未來需技術隔離
 - NAS 操作前必須先 trim-cli login，不假設 token 有效
@@ -144,21 +178,44 @@
 - shell 命令預期可能無結果時加 `|| true`，避免誤報
 - 用戶群組變更不影響已運行進程，需 `sg` 或新 session
 - `chown` 會覆蓋群組寫權限，需配套 `chmod -R g+w`
+- CSS class 命名衝突是隱蔽 bug，通用 class 名（`.empty`）容易意外匹配
+- Vite content hash 基於文件內容，minified 結果 hash 一樣時 `--no-cache` 也沒用
+- 移除不存在功能的代碼比修復它更正確
+- OCR pre-commit hook 審查範圍是整個文件，不只 diff — 既有代碼問題會混進來
+- `--primary-rgb` CSS 變數引入大量連鎖維護問題，硬編碼 rgba 更乾淨
+- mbsync `Create Both` + `Flatten .` 會在 Gmail 端建出重複標籤，用 `Create Near` 更安全
 
 ## 🔑 配置要點
-- 訊飛星火 Coding Plan 免費，成本=0，不需追蹤 estimatedCostUsd
-- 訊飛星火 timeoutSeconds: 900，agent timeoutSeconds: 900，compaction timeoutSeconds: 900
-- 主力模型：`讯飞星火/xopglm52`（智譜 GLM-5.2），fallback: `讯飞星火/astron-code-latest`
+- 訊飛星辰 MaaS 高效版 ¥199/月，額度：6,000次/5h、45,000次/週、90,000次/月
+- 訊飛星火 timeoutSeconds: 1800，agent timeoutSeconds: 1800，compaction timeoutSeconds: 900
+- 主力模型：`讯飞星火/xopglm51`（智譜 GLM-5.1，抵扣×4），fallback: `讯飞星火/auto`（×2）
+- 2026-08-02 從 xopglm52 切換到 xopglm51（GLM-5.2 限流嚴重）
+- Code Review：`xop3qwencodernext`（Qwen3-Coder-Next，抵扣×1）
+- 訊飛高效版全部可用模型（19個）：
+  - ×5: xopglm52(GLM-5.2), xopdeepseekv4pro(DS-V4-Pro), xopkimi27code(Kimi-K2.7-Code)
+  - ×4: xopglm51(GLM-5.1), xopkimik26(Kimi-K2.6)
+  - ×3: xopglm5(GLM-5), xopkimik25(KiMi-K2.5)
+  - ×2: auto, xsparkx2agent(Spark X2 Agent), xsparkx2(Spark X2), xopdeepseekv4flash(DS-V4-Flash), xopdeepseekv32(DS-V3.2), xminimaxm25(MiniMax-M2.5), xopqwen35397b(Qwen3.5-397B)
+  - ×1: xsparkx2flash(Spark-X2-Flash), xopqwen36v35b(Qwen3.6-35B), xopqwen35v35b(Qwen3.5-35B), xop3qwencodernext(Qwen3-Coder-Next), xopglmv47flash(GLM-4.7-Flash)
 - contextWindow: 512000（已生效），reserveTokensFloor: 20000
 - 訊飛星火 token 計數不可靠，API 回報值波動極大
 - xopglm52 實測支持 560k context，1M 超時
 - **訊飛適配計劃統一記錄：`xfyun-adaptation-plan.md`**
 - 微信 streaming mode: block（不支援 edit message）
+- 訊飛適配數據記錄：Redis DB1 `xfyun:records:*` + `xfyun:timeline`（每5分鐘自動記錄）
+- 訊飛星火高效版 ¥199/月，額度充裕（月用量 <20%）
 - 記憶搜索：Ollama nomic-embed-text
 - messages.suppressToolErrors: true（頂層）
 - auth.cooldowns: overloadedProfileRotations=3, overloadedBackoffMs=5000, rateLimitedProfileRotations=3
 - SearXNG 端口：8080（host 網路模式，非 8888）
 - Redis: DB0=SearXNG, DB1=TaskGuard, maxmemory 256MB+LRU
+- Redis DB1 命名空間規範：
+  - `tg:*` — Task Guard（去重/限流/快取）
+  - `xfyun:*` — 訊飛適配數據（records/timeline/recorded）
+  - `heartbeat:*` — 心跳狀態
+  - `grafana:*` — Grafana 告警
+  - 新增數據必須用 `前綴:子類:key` 格式，避免衝突
+  - ⚠️ Redis 只存熱數據（高頻讀頻讀寫/臨時/快取），結構化持久數據用 JSON 文件
 
 ## 🗓️ 小king 的學業
 - UWE 課程：Sem1 CGD / Sem2 Interaction Design / Sem3 Creative Tech Project / Sem4 3D Modelling
@@ -166,8 +223,10 @@
 - Google Calendar 已整合課程時間表
 
 ## 🕐 Cron 排程
-- 01:00 每天：深夜維護流水線（Wiki審查→記憶整理→Git Backup）
+- 01:00 每天：深夜維護流水線（健康檢查→系統清理→記憶整理→Git Backup）
+- 03:00 每天：SonarCloud 自動修復（fitness-coach-app，auto 模型，最多5-10個/次）
 - 07:00 每天：早安報告（天氣+郵件）
 - 深夜流水線 timeout: 1800s
 - ⚠️ 同一時段不要多個任務同時跑，會搶配額
 - ⚠️ cron 環境中 message tool 可能不可用（如 Discord plugin 未載入），健康檢查需注意
+- ⚠️ Discord Bot 檢查用 curl 直接打 API（不依賴 message plugin），Guild ID: 1531560409499172865

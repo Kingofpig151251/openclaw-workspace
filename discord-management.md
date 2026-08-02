@@ -20,11 +20,13 @@ Discord 伺服器 (Thoth-NAS)
 
 飛牛 NAS
 ├── /vol1/1000/projects/
-│   ├── xxx/   ← Bot 建共享目錄，設 ACL 權限
-│   └── yyy/   ← Bot 建共享目錄，設 ACL 權限
+│   ├── xxx/   ← 項目目錄，群組 proj-xxx 管權限
+│   └── yyy/   ← 項目目錄，群組 proj-yyy 管權限
 └── /vol1/<uid>/
     └── 每個用戶的個人目錄（私有）
 ```
+
+> ⚠️ 項目文件統一放在 `/vol1/1000/projects/<項目名>/`，每個項目建立對應的飛牛群組 `proj-<項目名>` 管理存取權限。
 
 ## 角色體系
 
@@ -146,23 +148,36 @@ Bot 會解析關鍵資訊（項目名、描述、邀請成員）。如果資訊�
    建立時間：2026-07-31
    ```
 
-#### Step 3：NAS 共享目錄
+#### Step 3：NAS 項目目錄與群組
 
 ```bash
 # 確保已登入
 trim-cli login -u lam151251 -p '***'
 
-# 建立項目目錄
+# 1. 建立項目群組（trim-cli 正規流程）
+trim-cli user group-add proj-web-app --comment "Web App 項目群組" --yes
+
+# 2. 把項目成員加入群組（--users 重複傳入）
+trim-cli user group-add-users proj-web-app --users lam151251 --users <成員2> --yes
+
+# 3. 建立項目目錄（trim-cli 正規流程）
 trim-cli file mkdir /vol1/1000/projects/web-app
 
-# 設定共享權限給項目成員（用成員的 NAS UID）
-trim-cli file share add /vol1/1000/projects/web-app web-app \
-  --permset '[{"uid":1000,"perm":"rw"},{"uid":1002,"perm":"rw"}]'
+# 4. 設定檔案權限（trim-cli file acl 只能 get 不能 set，用 sudo）
+#    ⚠️ 必須 -R 遞迴 + find 補 setgid，否則子目錄權限不對
+sudo chown -R root:proj-web-app /vol1/1000/projects/web-app
+sudo chmod -R 770 /vol1/1000/projects/web-app
+sudo find /vol1/1000/projects/web-app -type d -exec chmod g+s {} \;
+
+# 5. 把 OpenClaw 加入群組（trim-cli 無法加非飛牛用戶，用 sudo）
+sudo gpasswd -a trim.openclaw proj-web-app
 ```
 
-所有被邀請的成員自動獲得讀寫權限，可通過「他人共享」存取。
+所有群組成員自動獲得讀寫權限，新文件自動繼承群組（setgid）。
 
-> ⚠️ permset 裡的 UID 從 `discord-members.json` 讀取，如果成員沒有 UID 記錄則先查 `trim-cli user list`。
+> ⚠️ `trim.openclaw` 不是飛牛系統用戶，trim-cli 加不了，必須用 `sudo gpasswd -a trim.openclaw proj-<name>` 加入群組。
+
+> ⚠️ 權限設定必須 `-R` 遞迴，且用 `find -type d -exec chmod g+s` 補 setgid，否則子目錄群組沒有寫權限。
 
 #### Step 4：記錄項目資訊
 
@@ -176,6 +191,7 @@ Bot 更新 `memory/discord-projects.json`：
       "description": "網站開發",
       "discordChannelId": "xxx",
       "nasPath": "/vol1/1000/projects/web-app",
+      "nasGroup": "proj-web-app",
       "members": ["501559258492698637", "xxx", "yyy"],
       "createdBy": "小king",
       "createdAt": "2026-07-31",
@@ -206,7 +222,7 @@ Bot 更新 `memory/discord-projects.json`：
 ### Bot 自動執行
 
 1. **Discord**：把被邀請者加到項目頻道權限（可讀寫）
-2. **NAS**：通過 trim-cli 把 member-c 加到共享目錄權限目錄權限裡（讀寫）
+2. **NAS**：`trim-cli user group-add-users proj-web-app --users <成員> --yes`
 3. **通知**：在項目頻道發訊 `✅ @member-c 已加入項目 web-app`
 4. **更新**：更新 `memory/discord-projects.json` 的成員列表
 
@@ -220,7 +236,7 @@ Bot 更新 `memory/discord-projects.json`：
 
 Bot 執行：
 1. Discord：移除該成員的頻道權限
-2. NAS：通過 trim-cli 移除該成員的共享目錄權限
+2. **NAS**：`trim-cli user group-del-users proj-web-app --users <成員> --yes`
 3. 通知項目頻道
 4. 更新記錄
 
@@ -238,7 +254,7 @@ Bot 執行：
 
 Bot 執行：
 1. Discord：頻道設為唯讀，名稱改為 `#archived-web-app`
-2. NAS：共享目錄權限改為全員只讀
+2. NAS：`sudo chmod 750 /vol1/1000/projects/web-app`（群組改為唯讀）
 3. 更新項目狀態為 `archived`
 
 ### 刪除
@@ -247,8 +263,9 @@ Bot 執行：
 
 Bot 執行：
 1. Discord：刪除頻道
-2. NAS：刪除共享目錄（先確認無重要數據）
-3. 從記錄中移除
+2. NAS：`trim-cli file rm /vol1/1000/projects/web-app`（先確認無重要數據）
+3. `trim-cli user group-del proj-web-app --yes`
+4. 從記錄中移除
 
 ---
 
@@ -322,7 +339,7 @@ Admin 在私人頻道告訴 Bot：
 
 ### Bot 自動執行
 
-1. **NAS**：移除該成員在所有共享目錄的權限
+1. **NAS**：遍歷所有項目群組，`trim-cli user group-del-users proj-<項目> --users <成員> --yes`
 2. **NAS**：刪除該成員的 NAS 帳號（保留個人目錄資料 30 天）
 3. **Discord**：移除該成員在所有項目頻道的權限
 4. **Discord**：刪除該成員的私人頻道
@@ -333,28 +350,45 @@ Admin 在私人頻道告訴 Bot：
 
 ## 飛牛 NAS 操作速查（Bot 用）
 
+### 用戶與群組
+
 | 操作 | 命令 |
 |------|------|
 | 建用戶 | `trim-cli user add <name> --password '***' --yes` |
 | 刪用戶 | `trim-cli user del <name> --yes` |
 | 改密碼 | `trim-cli user mod <name> --password '***'` |
 | 列用戶 | `trim-cli user list` |
-| 建目錄 | `trim-cli file mkdir <path>` |
-| 建共享 | `trim-cli file share add <path> <name> --permset '<json>'` |
-| 刪共享 | `trim-cli file share del <name>` |
-| 查權限 | `trim-cli file acl get <path>` |
+| 建群組 | `trim-cli user group-add proj-<name> --comment "..." --yes` |
+| 刪群組 | `trim-cli user group-del proj-<name> --yes` |
+| 加成員 | `trim-cli user group-add-users proj-<name> --users <user> [--users <user2>] --yes` |
+| 減成員 | `trim-cli user group-del-users proj-<name> --users <user> --yes` |
+| 查群組 | `trim-cli user group-info proj-<name>` |
+| 列群組 | `trim-cli user group-list` |
+
+### 檔案與目錄
+
+| 操作 | 命令 |
+|------|------|
+| 建目錄 | `trim-cli file mkdir /vol1/1000/projects/<name>` |
+| 刪目錄 | `trim-cli file rm /vol1/1000/projects/<name>` |
+| 查 ACL | `trim-cli file acl get /vol1/1000/projects/<name>` |
 | 列共享 | `trim-cli file share list` |
 
-### permset JSON 格式
+### 檔案權限（trim-cli 無 set ACL 功能，用 sudo）
 
-```json
-[{"uid":1001,"perm":"rw"},{"uid":1002,"perm":"r"}]
+```bash
+# 設定項目目錄權限（必須 -R 遞迴 + find 補 setgid）
+sudo chown -R root:proj-<name> /vol1/1000/projects/<name>
+sudo chmod -R 770 /vol1/1000/projects/<name>
+sudo find /vol1/1000/projects/<name> -type d -exec chmod g+s {} \;
+
+# 歸檔改唯讀
+sudo chmod -R 750 /vol1/1000/projects/<name>
 ```
 
-- `rw` = 讀寫
-- `r` = 只讀
+> ⚠️ `trim.openclaw` 不是飛牛系統用戶，無法用 trim-cli 加入群組，必須用 `sudo gpasswd -a trim.openclaw proj-<name>`。
 
-> ⚠️ UID 從 `discord-members.json` 讀取，缺失時用 `trim-cli user list` 查詢。
+> ⚠️ 權限設定必須 `-R` 遞迴，且用 `find -type d -exec chmod g+s` 補 setgid，否則子目錄群組沒有寫權限。
 
 ---
 

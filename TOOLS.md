@@ -37,6 +37,17 @@ Things like:
 - Docker compose：`/vol1/docker/searxng/docker-compose.yml`
 - Settings：`/vol1/docker/searxng/settings.yml`（bind mount，只讀）
 
+## PostgreSQL 16 (Thoth 自用)
+- Docker 容器：thoth-postgres
+- Port：5433（避開飛牛系統 PG 的 5432）
+- 配置：`/vol1/@apphome/trim.openclaw/docker/postgres/docker-compose.yml`
+- 數據：`/vol1/@apphome/trim.openclaw/docker/postgres/data/`
+- 用戶：thoth / Thoth@963852
+- Database：thoth
+- 表：discord_members, discord_projects, discord_project_members, mail_classifications
+- 用途：結構化持久數據（Discord 成員/項目、郵件分類記錄）
+- Python：`psycopg2-binary` 已安裝在 .venv
+
 ## Redis 8.2.1
 - `localhost:6379`，maxmemory 256MB + allkeys-lru
 - DB0：SearXNG 快取

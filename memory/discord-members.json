@@ -1,23 +1,6 @@
-{
-  "members": [
-    {
-      "discordId": "501559258492698637",
-      "discordName": "小king",
-      "nasUsername": "lam151251",
-      "nasUid": 1000,
-      "channelId": "1532647352832102532",
-      "joinedAt": "2026-07-28",
-      "role": "admin"
-    },
-    {
-      "discordId": "933062709673590844",
-      "discordName": "zeronosu",
-      "nasUsername": "zeronosu",
-      "nasUid": 1002,
-      "channelId": "1532681534039916687",
-      "joinedAt": "2026-07-31",
-      "role": "member"
-    }
-  ],
-  "updatedAt": "2026-07-31"
-}
+[
+  {"username": "蹭兄弟蝦塘來養蝦的小king", "global_name": "蹭兄弟蝦塘來養蝦的小king", "id": null, "bot": false},
+  {"username": "桃桃", "global_name": "桃桃", "id": null, "bot": false},
+  {"username": "zeronosu", "global_name": "zeronosu", "id": null, "bot": false},
+  {"username": "thoth", "global_name": null, "id": "1528998891092181023", "bot": true}
+]

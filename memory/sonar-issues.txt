@@ -1,0 +1,37 @@
+# SonarCloud Issues Tracking
+# Last updated: 2026-08-02 07:46 CST
+# SonarCloud API total: 374 (many are stale - code has changed since last analysis)
+
+## Current ESLint (SonarLint) Status
+- Errors: 6 (all cognitive complexity S3776)
+- Warnings: 57 (all no-duplicate-string S1192)
+
+## Remaining Cognitive Complexity Issues (ESLint verified)
+1. js/ai.js L775 - loadLastConversation() CC 38 (CRITICAL)
+2. js/course.js L238 - CC 48 (CRITICAL)
+3. js/data-service.js L131 - CC 27 (CRITICAL)
+4. js/modal.js L125 - CC 21 (CRITICAL)
+5. js/calendar.js L75 - CC 17 (MAJOR)
+6. js/course.js L574 - CC 22 (CRITICAL)
+
+## Fixed This Session (2026-08-02)
+- js/ai.js sendAiMessage() CC 38→≤15 ✅
+- js/ai.js _confirmOperation() CC 17→≤15 ✅
+  - Extracted: _handleSseEvent, _readSseStream, _showStreamTimeoutMessage,
+    _showNoResponseMessage, _processStreamResult, _updateConfirmCard
+
+## Stale SonarCloud Issues (already fixed in code)
+- S1128 (unused imports) on courses/compute/formulas/studios/sync.ts - already removed
+- S1128 (hasToolCall) on ai.ts - never existed in current code
+- S7772 (node: prefix) on admin.ts - already uses node: prefix
+- S6505 (--ignore-scripts) on server/Dockerfile - already has --ignore-scripts
+- S6505 on root Dockerfile - already has --ignore-scripts
+- S7637 (full SHA) on docker-build-push.yml - already uses full SHA
+- S1854 (useless assignments) on course-calc.js, course.js - code changed
+- S3696 (throw Error) on courses.ts - already throws Error object
+- S1854 (streamFinished/timeoutTriggered) on ai.ts - variables don't exist
+
+## Next Batch Plan
+- Refactor loadLastConversation() CC 38→≤15 (ai.js)
+- Refactor course.js L238 CC 48→≤15 (biggest CC)
+- Note: Each batch max 2 CC refactors per rules

@@ -211,10 +211,42 @@ Prometheus 告警 → Grafana Contact Point(OpenClaw Webhook)
 | Ollama | 11434 | 本地 embedding（nomic-embed-text） |
 | Webhook | 15010 | Grafana 告警接收 |
 
-## 九、待辦 / 改進方向
+## 九、Session 級適配數據記錄
+
+### 腳本
+- `scripts/xfyun-recorder.py` — 每 5 分鐘掃描 sessions.json，檢測 session 狀態變化
+
+### 記錄欄位
+| 欄位 | 說明 |
+|------|------|
+| timestamp | 記錄時間 |
+| session_type | 類型（main/weixin-dm/cron/discord/subagent） |
+| model | 模型名 |
+| input/output_tokens | 輸入/輸出 token 數 |
+| cache_read/write | 快取 token 數 |
+| total_tokens | 總 token 數 |
+| compaction_count | Compaction 次數 |
+| runtime_seconds | 運行時間（秒） |
+| context_tokens | 上下文窗口大小 |
+| aborted | 是否中斷 |
+| timeout | 是否超時 |
+| rate_limited | 是否限流（推斷） |
+| fallback_triggered | 是否觸發 fallback |
+| status | Session 狀態 |
+
+### 數據文件
+- 記錄：Redis DB1 `xfyun:records:{key}` (HASH，保留最近 1000 條)
+- 時間線：Redis DB1 `xfyun:timeline` (ZSET，按時間排序)
+- 去重：Redis DB1 `xfyun:recorded` (SET)
+- 舊 JSON 數據已備份到 `memory/archive/xfyun-optimization.json`
+
+### Cron
+- ID: `8c701dfc`，每 5 分鐘，command 模式（不消耗 token）
+
+## 十、待辦 / 改進方向
 
 - [ ] Webhook @reboot 自啟機制（目前手動啟動）
 - [ ] 告警微信推送實際觸發測試（鏈路已通但未模擬真實告警）
 - [ ] contextBudgetStatus 結構化推送（目前太複雜暫不推）
-- [ ] 考慮即時推送（每次對話結束推送，而非等5分鐘 cron）
 - [ ] 訊飛收費後啟用 estimatedCostUsd 追蹤
+- [ ] 適配數據定期分析報告（週報：哪種任務最耗 token、哪個時段容易限流）

@@ -3,13 +3,29 @@
     {
       "name": "fitness-coach-app",
       "description": "Fitness Coach PWA - AI assistant for personal trainers",
-      "discordChannelId": "1532673924406710282",
+      "discordChannelId": 1532673924406710282,
       "nasPath": "/vol1/1000/projects/fitness-coach-app",
-      "members": ["501559258492698637"],
+      "nasGroup": "proj-fitness-coach",
+      "members": [
+        "501559258492698637"
+      ],
       "createdBy": "小king",
       "createdAt": "2026-07-31",
       "status": "active"
+    },
+    {
+      "name": "king-wiki-js",
+      "description": "小king 私人知識庫 Wiki.js",
+      "discordChannelId": 1532981642396700795,
+      "nasPath": "/vol1/1000/projects/king-wiki-js",
+      "nasGroup": "proj-king-wiki-js",
+      "members": [
+        "501559258492698637"
+      ],
+      "createdBy": "小king",
+      "createdAt": "2026-08-01",
+      "status": "active"
     }
   ],
-  "updatedAt": "2026-07-31"
+  "updatedAt": "2026-08-01"
 }
