@@ -13,6 +13,26 @@ Things like:
 - Device nicknames
 - Anything environment-specific
 
+## MCP Servers（已安裝）
+- **GitHub MCP** (`github`): 9 工具 — create_issue, create_pull_request, get_file_contents, get_issue, list_commits, list_issues, list_pull_requests, merge_pull_request, search_repositories
+- **Filesystem MCP** (`filesystem`): 8 工具 — read_file, write_file, list_directory, search_files, get_file_info, create_directory, move_file, directory_tree
+  - 掛載目錄：/vol1/1000/projects/fitness-coach-app, /vol1/@apphome/trim.openclaw/data/workspace
+- **SonarCloud MCP** (`sonarcloud`): 12 工具 — search_issues, get_quality_gate_status, get_measures, get_pull_requests, change_issue_status, show_rule, list_projects, list_quality_gates, search_metrics, list_languages, list_rule_repositories, get_raw_source
+  - Env: SONARCLOUD_TOKEN, SONARCLOUD_ORGANIZATION=section-nexus
+- ⚠️ 優先使用 MCP 工具，不要手動 curl 拼 API！MCP 更快更安全
+- ⚠️ SonarCloud env 變量名：SONARCLOUD_TOKEN（不是 API_KEY），SONARCLOUD_ORGANIZATION（不是 ORG）
+- ⚠️ Filesystem MCP 的 search_files 和 directory_tree 是原生 tool 沒有的功能，不要因為習慣原生 read/write 就不用 MCP
+- ⚠️ 每次操作前先想：這個有 MCP 工具嗎？有的話用 MCP，不要 curl
+- ⚠️ 說「記得了」不算數，必須寫在 TOOLS.md 或 MEMORY.md 裡才算
+- ⚠️ 搜索代碼用 Filesystem MCP 的 search_files / directory_tree，不建手動索引（維護成本高、易過時）
+
+## GitHub
+- PAT: `ghp_2rF9...lo6m`（Kingofpig151251, repo scope）— ⚠️ 完整 token 不應提交，見本地備忘
+- gh CLI: `/usr/local/bin/gh`（需 `echo TOKEN | gh auth login --with-token`，缺 read:org scope 但 API 可用）
+- Repo: `Section-Nexus/fitness-coach-app`（SSH: git@github.com:...）
+- SonarCloud API key: `027a00bd...c004`（用 `-u KEY:` 認證）— ⚠️ 完整 key 不應提交
+- SonarCloud project: `Section-Nexus_fitness-coach-app` / org: `section-nexus`
+
 ## Ollama
 - Path: `/vol1/@appcenter/ai_installer/ollama/bin/ollama`
 - API: `http://localhost:11434`

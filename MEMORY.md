@@ -75,12 +75,15 @@
 - 2026-08-01~03 修復進展：
   - UI 規範修復：CSS 變數體系、硬編碼 #fff/rgba 替換、--surface 誤用修復
   - 後端審計修復：sid→studioId、CORS production、Admin Zod、ESM require→import、Auth 限流
-  - 命名重構：sid/sname→studioId/studioName、recurringGroupId 完全移除
-  - FormulaTemplate→Formula 重命名進行中
-  - SonarCloud 自動修復 cron（每天 03:00）
-- 待辦：Build+部署驗證深色模式、Medium/Low 後端問題、JS inline style、硬編碼 px
-- dev 和 main 已同步，main 為最新部署版本
+  - 命名重構：sid/sname→studioId/studioName、recurringGroupId 完全移除、FormulaTemplate→Formula
+  - SonarCloud 滿分衝刺：PR #22-26，45 個問題全部修復，Quality Gate OK
+  - 瘦身+UI統一+代碼質量：PR #26（刪未用圖片、移除死依賴、硬編碼rgba→CSS變數、z.any()→類型化schema）
+  - Docker 重新部署：Vite build 修復（孤兒代碼、import 缺失）、3 容器健康
+  - 用戶引導 Guide 修復：dialog.showModal()、tooltip 定位
+- dev 分支已刪，只剩 main 分支
 - ⚠️ 部署用的 .env 含密鑰，不應提交
+- ⚠️ Vite 打包不檢查跨模組 import 完整性，瘦身/重構後必須做完整功能測試
+- ⚠️ sed 刪多行代碼很危險，Python 更可靠
 
 ## 📧 Agent Mail（新）
 - agently-cli 已安裝，OAuth 已授權
@@ -153,6 +156,7 @@
 - 審計日誌：`memory/discord-audit.log`
 - Discord API 需用 `DiscordBot` User-Agent，Python urllib 會被 Cloudflare 1010
 - 成員：小king（admin, UID 1000）+ zeronosu（member, UID 1002，2026-07-31 加入）+ 桃桃（2026-08-02 加入）
+- ⚠️ Discord API members?limit=100 只返回 2 人（可能 bot 權限問題），與 discord-members.json 記錄 4 人有差異
 - 項目頻道命名：直接用項目名，不加 project- 前綴
 - 記憶隔離：目前靠自律，未來需技術隔離
 - NAS 操作前必須先 trim-cli login，不假設 token 有效
@@ -184,13 +188,40 @@
 - OCR pre-commit hook 審查範圍是整個文件，不只 diff — 既有代碼問題會混進來
 - `--primary-rgb` CSS 變數引入大量連鎖維護問題，硬編碼 rgba 更乾淨
 - mbsync `Create Both` + `Flatten .` 會在 Gmail 端建出重複標籤，用 `Create Near` 更安全
+- **MCP Servers 已安裝**（2026-08-03）：GitHub(9工具)、Filesystem(8工具)、SonarCloud(12工具)
+  - ⚠️ 優先用 MCP，不要手動 curl 拼 API
+  - ⚠️ Filesystem MCP 的 search_files / directory_tree 是原生 tool 沒有的功能
+  - ⚠️ 搜索代碼用 MCP 即時搜索，不建手動索引（維護成本高、易過時）
+- **SonarCloud 滿分衝刺教訓**：
+  - SonarCloud noinspection 註釋無效（不像 SonarQube 本地版）
+  - PR 新代碼陷阱：修舊問題時引入敏感字面量反而觸發新告警
+  - 正確策略：讓舊問題留在 main 舊代碼中，只修真正需要修的
+  - regex 批量替換 JS 文件容易搞壞語法
+  - 閉包函數提取到 module scope 時需確保不丟失上下文
+- **排查問題時一次加足所有關鍵節點的 log，不要每次只加一點讓用戶來回跑**
+  - 正確做法：入口、分支、計算、最終結果一次 log 全覆蓋
+  - log 用基本類型（數字/字串），不要用 Object（壓縮後看不到）
+  - 先看數據再動手，不要猜
+- **`<dialog>` 元素在 `showModal()` 前子元素不可見**，offsetWidth/offsetHeight 返回 0
+  - 必須先 showModal() 再測量子元素尺寸
+  - 修完一個問題後要驗證下游是否也正常，不要假設修好了就收工
+- **嘴上說記得不算，要寫在文件裡才算**（小king 教訓）
+- **Vite 打包不檢查跨模組 import 完整性**，瘦身/重構後必須做完整功能測試
+- **sed 刪多行代碼很危險，Python 更可靠**
 
 ## 🔑 配置要點
 - 訊飛星辰 MaaS 高效版 ¥199/月，額度：6,000次/5h、45,000次/週、90,000次/月
 - 訊飛星火 timeoutSeconds: 1800，agent timeoutSeconds: 1800，compaction timeoutSeconds: 900
 - 主力模型：`讯飞星火/xopglm51`（智譜 GLM-5.1，抵扣×4），fallback: `讯飞星火/auto`（×2）
 - 2026-08-02 從 xopglm52 切換到 xopglm51（GLM-5.2 限流嚴重）
-- Code Review：`xop3qwencodernext`（Qwen3-Coder-Next，抵扣×1）
+- 2026-08-03 模型配置大更新：
+  - 19 個模型全部加入 allowlist（含 alias）
+  - primary: xopglm51，fallback: auto → xopdeepseekv4flash
+  - utilityModel: xopglmv47flash（標題等小事用最便宜的）
+  - contextWindow: xopglm52=512K，其餘=128K（待深夜測試）
+  - 深夜流水線測試腳本：scripts/xfyun-model-context-test.py
+  - xopkimi27code API 報 Model Not Found（可能未上線）
+  - Code Review：`xop3qwencodernext`（Qwen3-Coder-Next，抵扣×1）
 - 訊飛高效版全部可用模型（19個）：
   - ×5: xopglm52(GLM-5.2), xopdeepseekv4pro(DS-V4-Pro), xopkimi27code(Kimi-K2.7-Code)
   - ×4: xopglm51(GLM-5.1), xopkimik26(Kimi-K2.6)
@@ -224,7 +255,7 @@
 
 ## 🕐 Cron 排程
 - 01:00 每天：深夜維護流水線（健康檢查→系統清理→記憶整理→Git Backup）
-- 03:00 每天：SonarCloud 自動修復（fitness-coach-app，auto 模型，最多5-10個/次）
+- 03:00 每天：SonarCloud 自動修復（fitness-coach-app，auto 模型，最多5-10個/次）⚠️ PR #22-26 已全部 merged，SonarCloud 問題已清零，此 cron 可能需調整
 - 07:00 每天：早安報告（天氣+郵件）
 - 深夜流水線 timeout: 1800s
 - ⚠️ 同一時段不要多個任務同時跑，會搶配額
